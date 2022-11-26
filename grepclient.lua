@@ -1,6 +1,7 @@
 local JSON = require("JSON")
 local htmlparser = require("htmlparser")
 local http = require("socket.http")
+
 local API = 'https://grep.app/api/search'
 
 local function api_request(query, params)
@@ -22,7 +23,7 @@ local function api_request(query, params)
 end
 
 
-local function grep(search_query, params)
+function Grep(search_query, params)
   local results = {}
   local api_response = api_request(search_query, params)
   local hits = api_response['hits']['hits']
@@ -57,7 +58,7 @@ local function grep(search_query, params)
   return results, languages
 end
 
-local function raw_code(url)
+function Code_from_url(url)
   local body, code = http.request(url)
   if code == 200 then
     return body
@@ -69,13 +70,11 @@ end
 
 
 local params = {words = true, case = false, regexp = true, lang = "Python"}
-local results, suggestions = grep("print", params)
+local results, suggestions = Grep("print", params)
 local result = results[1]
 if result then
-  local raw_url = result.raw_url
-  print(raw_url)
   print(result.lines[1].url)
-  print(raw_code(raw_url))
+  print(Code_from_url(result.raw_url))
 else
   print("No results found. Suggested langs")
   print(JSON:encode(suggestions))
