@@ -1,8 +1,17 @@
-# Depends
+# Work in progress
+
+# What it does
+
+Browse and grab code from https://grep.app directly from neovim.
+
+
+# Dependencies
 
 ```
-pacman -S lua-socket lua-sec
-yay -S lua-luajson
+luarocks install luasec --local
+luarocks install luasocket --local
+luarocks install lua-json --local
 luarocks install htmlparser --local
 eval "$(luarocks path)"
+lua grepclient.lua
 ```
