@@ -1,6 +1,6 @@
 [submodule "lua/grep_app/lib/lua-htmlparser"]
 	path = lua/grep_app/lib/lua-htmlparser
-	url = https://github.com/nvim-lua/plenary.nvim.git
+	url = https://github.com/msva/lua-htmlparser
 [submodule "lua/grep_app/lib/json_lua"]
 	path = lua/grep_app/lib/json_lua
 	url = https://github.com/rxi/json.lua.git
