@@ -1,7 +1,15 @@
-local JSON = require("JSON")
-local htmlparser = require("htmlparser")
-local http = require("socket.http")
+-- print(package.path)
+-- package.path = "./modules/json.lua/json.lua;./modules/lua-htmlparser/src/htmlparser.lua" .. package.path
+-- local json = require("json")
+-- local htmlparser = require "HtmlParser"
+-- local debug = require("./anyshit")
+local debug = dofile("./debug.lua")
+local json = dofile("./modules/json.lua/json.lua")
+local htmlparser = dofile("./modules/lua-htmlparser/src/htmlparser.lua")
 
+local curl = require "plenary.curl"
+
+debug.dump(htmlparser)
 local API = 'https://grep.app/api/search'
 
 local function api_request(query, params)
@@ -14,11 +22,11 @@ local function api_request(query, params)
   end
 
   local url = API .. '?q=' .. query .. params_str
-  local body, code = http.request(url)
-  if code == 200 then
-    return JSON:decode(body)
+  local res = curl.get(url)
+  if res.status == 200 then
+    return json.decode(res.body)
   else
-      print('Error: '..code)
+      print('Error: '..res.status)
   end
 end
 
@@ -59,11 +67,11 @@ function Grep(search_query, params)
 end
 
 function Code_from_url(url)
-  local body, code = http.request(url)
-  if code == 200 then
-    return body
+  local res = curl.get(url)
+  if res.status == 200 then
+    return res.body
   else
-    print('Error: '..code)
+    print('Error: '..res.status)
   end
 end
 
@@ -77,5 +85,5 @@ if result then
   print(Code_from_url(result.raw_url))
 else
   print("No results found. Suggested langs")
-  print(JSON:encode(suggestions))
+  print(json.encode(suggestions))
 end

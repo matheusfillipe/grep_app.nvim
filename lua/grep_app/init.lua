@@ -2,6 +2,10 @@ local pickers = require "telescope.pickers"
 local finders = require "telescope.finders"
 local conf = require("telescope.config").values
 
+local JSON = require("JSON")
+
+-- local grepclient = require "./grepclient"
+
 -- our picker function: colors
 local colors = function(opts)
   opts = opts or {}

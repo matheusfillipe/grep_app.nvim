@@ -1,0 +1,6 @@
+[submodule "lua/modules/lua-htmlparser"]
+	path = lua/modules/lua-htmlparser
+	url = https://github.com/nvim-lua/plenary.nvim.git
+[submodule "lua/modules/json.lua"]
+	path = lua/modules/json.lua
+	url = https://github.com/rxi/json.lua.git
