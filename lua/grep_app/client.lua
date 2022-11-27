@@ -1,15 +1,14 @@
--- print(package.path)
--- package.path = "./modules/json.lua/json.lua;./modules/lua-htmlparser/src/htmlparser.lua" .. package.path
--- local json = require("json")
--- local htmlparser = require "HtmlParser"
--- local debug = require("./anyshit")
-local debug = dofile("./debug.lua")
-local json = dofile("./modules/json.lua/json.lua")
-local htmlparser = dofile("./modules/lua-htmlparser/src/htmlparser.lua")
+local curl = require("plenary.curl")
+local json = require("grep_app.lib.json_lua.json")
+local utils = require("grep_app.utils")
 
-local curl = require "plenary.curl"
+local original_package_path = package.path
+local htmlparser_dir = utils.script_path().."lib/lua-htmlparser/src/?.lua"
+package.path = package.path .. ";" .. htmlparser_dir
+local htmlparser = require("grep_app.lib.lua-htmlparser.src.htmlparser")
+package.path = original_package_path
 
-debug.dump(htmlparser)
+
 local API = 'https://grep.app/api/search'
 
 local function api_request(query, params)
@@ -77,13 +76,13 @@ end
 
 
 
-local params = {words = true, case = false, regexp = true, lang = "Python"}
-local results, suggestions = Grep("print", params)
-local result = results[1]
-if result then
-  print(result.lines[1].url)
-  print(Code_from_url(result.raw_url))
-else
-  print("No results found. Suggested langs")
-  print(json.encode(suggestions))
-end
+-- local params = {words = true, case = false, regexp = true, lang = "Python"}
+-- local results, suggestions = Grep("print", params)
+-- local result = results[1]
+-- if result then
+--   print(result.lines[1].url)
+--   print(Code_from_url(result.raw_url))
+-- else
+--   print("No results found. Suggested langs")
+--   print(json.encode(suggestions))
+-- end
