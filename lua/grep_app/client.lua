@@ -16,7 +16,9 @@ local function api_request(query, params)
   if params then
     for k, v in pairs(params) do
       if k == "lang" then k = "f.lang" end
-      params_str = params_str .. '&' .. k .. '=' .. tostring(v)
+      if v ~= nil then
+        params_str = params_str .. '&' .. k .. '=' .. tostring(v)
+      end
     end
   end
 
@@ -74,7 +76,10 @@ function Code_from_url(url)
   end
 end
 
-
+return {
+  Grep = Grep,
+  Code_from_url = Code_from_url
+}
 
 -- local params = {words = true, case = false, regexp = true, lang = "Python"}
 -- local results, suggestions = Grep("print", params)
