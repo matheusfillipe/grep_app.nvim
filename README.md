@@ -1,8 +1,8 @@
-# Work in progress
+> Work in progress
 
 # What it does
 
-Browse and grab code from https://grep.app directly from neovim. You can then view it in a temporary buffer.
+This is a telescope extension for grabing code from https://grep.app directly from neovim. You can then view it in a temporary buffer.
 
 
 # Dependencies
@@ -11,7 +11,8 @@ Browse and grab code from https://grep.app directly from neovim. You can then vi
 
 # Install
 
-```
+```vim
+Plug 'nvim-telescope/telescope.nvim'
 Plug 'nvim-lua/plenary.nvim'
 Plug 'matheusfillipe/grep_app.nvim'
 ```
@@ -20,7 +21,7 @@ Plug 'matheusfillipe/grep_app.nvim'
 
 Add to your init.vim:
 
-```
+```vim
 lua << EOF
   require('telescope').load_extension('grep_app')
 EOF
