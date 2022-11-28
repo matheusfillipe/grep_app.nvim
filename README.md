@@ -28,4 +28,4 @@ nnoremap <space>ga <cmd>Telescope grep_app<cr>
 vnoremap <space>ga <cmd>Telescope grep_app<cr>
 ```
 
-
+Then `<space>ga` will search for your current line in grep.app
