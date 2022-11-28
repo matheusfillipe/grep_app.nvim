@@ -1,3 +1,5 @@
+local actions = require "telescope.actions"
+local action_state = require "telescope.actions.state"
 local pickers = require "telescope.pickers"
 local finders = require "telescope.finders"
 local conf = require("telescope.config").values
@@ -13,7 +15,14 @@ grepapp.picker = function(opts)
   local ftype = opts.ftype or vim.bo.filetype
   local lang = language_map[ftype]
   local params = {words = true, case = false, regexp = true, lang = lang}
-  local query = utils.get_current_line()
+
+  local query
+  -- TODO not working to detect visual mode
+  if vim.fn.mode == "v" then
+    query = utils.get_visual_selection()
+  else
+    query = utils.get_current_line()
+  end
   local results, lang_suggestions = grepclient.Grep(query, params)
 
   opts = opts or {}
@@ -28,6 +37,7 @@ grepapp.picker = function(opts)
         for _,line in pairs(entry.value.lines) do
           table.insert(preview, line.code)
         end
+        vim.api.nvim_buf_set_option(self.state.bufnr, "filetype", ftype)
         vim.api.nvim_buf_set_lines(self.state.bufnr, 0, -1, false, preview)
       end,
     },
@@ -42,6 +52,29 @@ grepapp.picker = function(opts)
       end
     },
     sorter = conf.generic_sorter(opts),
+    attach_mappings = function(prompt_bufnr)
+      actions.select_default:replace(function()
+        local entry = action_state.get_selected_entry()
+        actions.close(prompt_bufnr)
+        local raw_url = entry.value.raw_url
+        local code = grepclient.Code_from_url(raw_url)
+        -- Create a new buffer with that code
+        local bufnr = vim.api.nvim_create_buf(true, true)
+        vim.api.nvim_set_current_buf(bufnr)
+        local lines = {}
+        for line in code:gmatch("([^\n]*)\n?") do
+          table.insert(lines, line)
+        end
+        vim.api.nvim_buf_set_text(bufnr, 0, 0, 0, 0, lines)
+        -- switch to new buffer
+        vim.api.nvim_buf_set_option(bufnr, "filetype", ftype)
+        vim.api.nvim_buf_set_option(bufnr, "buftype", "nofile")
+
+        local lnum = entry.value.lines[1].lnum
+        vim.api.nvim_win_set_cursor(0, {lnum, 0})
+    end)
+    return true
+  end
   }):find()
 end
 

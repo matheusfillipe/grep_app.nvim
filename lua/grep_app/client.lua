@@ -12,18 +12,19 @@ package.path = original_package_path
 local API = 'https://grep.app/api/search'
 
 local function api_request(query, params)
-  local params_str = ''
+  params.q = query
   if params then
     for k, v in pairs(params) do
-      if k == "lang" then k = "f.lang" end
-      if v ~= nil then
-        params_str = params_str .. '&' .. k .. '=' .. tostring(v)
+      if k == "lang" then
+        params["f.lang"] = v
+        params[k] = nil
       end
+      params[k] = tostring(v)
     end
   end
 
-  local url = API .. '?q=' .. query .. params_str
-  local res = curl.get(url)
+  -- encode query
+  local res = curl.request({method = "get", url = API, query = params})
   if res.status == 200 then
     return json.decode(res.body)
   else
@@ -45,17 +46,17 @@ function Grep(search_query, params)
       local lineno = root('tr')
       local lines = {}
       for _, e in ipairs(lineno) do
-        local lnum = e.attributes["data-line"] - 1
-        local line = e('pre')[1]:textonly()
+        local lnum = tonumber(e.attributes["data-line"])
+        local line = utils.unescape_html(e('pre')[1]:textonly())
         local url = "https://github.com/" ..
             match.repo.raw.."/blob/" ..
             ((match.branch or {}).raw or 'master').."/"..match.path.raw ..
             "#L"..lnum
         table.insert(lines, {lnum = lnum, url = url, code = line})
-      local raw_url = "https://raw.githubusercontent.com/" ..
-          match.repo.raw.."/"..((match.branch or {}).raw or 'master').."/"..match.path.raw
-      table.insert(results, {lines = lines, raw_url = raw_url})
       end
+      local raw_url = "https://raw.githubusercontent.com/" ..
+      match.repo.raw.."/"..((match.branch or {}).raw or 'master').."/"..match.path.raw
+      table.insert(results, {lines = lines, raw_url = raw_url})
     end
   end
 
