@@ -2,14 +2,18 @@ local curl = require("plenary.curl")
 local json = require("grep_app.lib.json_lua.json")
 local utils = require("grep_app.utils")
 
-local original_package_path = package.path
-local htmlparser_dir = utils.script_path().."lib/lua-htmlparser/src/?.lua"
-package.path = package.path .. ";" .. htmlparser_dir
-local htmlparser = require("grep_app.lib.lua-htmlparser.src.htmlparser")
-package.path = original_package_path
-
-
 local API = 'https://grep.app/api/search'
+
+
+local function get_htmlparser()
+  local original_package_path = package.path
+  local htmlparser_dir = utils.script_path().."lib/lua-htmlparser/src/?.lua"
+  package.path = package.path .. ";" .. htmlparser_dir
+  local htmlparser = require("grep_app.lib.lua-htmlparser.src.htmlparser")
+  package.path = original_package_path
+  return htmlparser
+end
+
 
 local function api_request(query, params)
   params.q = query
@@ -42,6 +46,7 @@ function Grep(search_query, params)
     for i = 1, #hits do
       local match = hits[i]
       local snippet = match.content.snippet
+      local htmlparser = get_htmlparser()
       local root = htmlparser.parse(snippet)
       local lineno = root('tr')
       local lines = {}
