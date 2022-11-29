@@ -3,6 +3,6 @@ return require("telescope").register_extension {
     -- access extension config and user config
   end,
   exports = {
-    grep_app = require("grep_app").picker
+    grep_app = require("grep_app").picker,
   },
 }

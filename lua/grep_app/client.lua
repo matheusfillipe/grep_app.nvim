@@ -61,7 +61,7 @@ function Grep(search_query, params)
       end
       local raw_url = "https://raw.githubusercontent.com/" ..
       match.repo.raw.."/"..((match.branch or {}).raw or 'master').."/"..match.path.raw
-      table.insert(results, {lines = lines, raw_url = raw_url})
+      table.insert(results, {lines = lines, raw_url = raw_url, repo = match.repo.raw, path = match.path.raw})
     end
   end
 

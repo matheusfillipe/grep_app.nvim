@@ -15,14 +15,15 @@ grepapp.picker = function(opts)
   local ftype = opts.ftype or vim.bo.filetype
   local lang = language_map[ftype]
   local params = {words = true, case = false, regexp = true, lang = lang}
+  local mode = opts.grep_app_mode
 
   local query
-  -- TODO not working to detect visual mode
-  if vim.fn.mode == "v" then
-    query = utils.get_visual_selection()
+  if opts.search_query then
+    query = opts.search_query
   else
     query = utils.get_current_line()
   end
+  print(query)
   local results, lang_suggestions = grepclient.Grep(query, params)
 
   opts = opts or {}
@@ -46,7 +47,7 @@ grepapp.picker = function(opts)
       entry_maker = function(result)
         return {
           value = result,
-          display = result.lines[1].code,
+          display = result.repo..": "..result.lines[1].code,
           ordinal = result.lines[1].code,
         }
       end
