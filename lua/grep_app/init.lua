@@ -11,6 +11,16 @@ local utils = require("grep_app.utils")
 local language_map = require("grep_app.language_map")
 
 local grepapp = {}
+grepapp.config = {}
+
+
+grepapp.setup = function(ext_config, _)
+  -- ext_config overrides opts
+  ext_config = ext_config or {}
+  for k, v in pairs(ext_config) do
+    grepapp.config[k] = v
+  end
+end
 
 local make_previewer = function(opts)
   return previewers.new_buffer_previewer {
@@ -132,6 +142,13 @@ local lang_repeat_picker = function(opts, languages)
 end
 
 local parse_opts = function(opts)
+  -- Command args override config
+  for k, v in pairs(grepapp.config) do
+    if opts[k] == nil then
+      opts[k] = v
+    end
+  end
+
   local ftype = opts.ftype or vim.bo.filetype
   opts.ftype = ftype
   local max_results = opts.max_results or 20
@@ -214,6 +231,8 @@ grepapp.live_picker = function(opts)
   opts.fn = dyn_finder
 
   local live_grepper = finders.new_dynamic(opts)
+
+  opts.sorting_strategy = "ascending"
 
   pickers.new(opts, {
     title = "Live grep.app",

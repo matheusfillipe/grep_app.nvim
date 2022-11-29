@@ -50,8 +50,25 @@ Currently the commands supports the following parameters:
 
 * `max_results=[int]` Max number of results to get from grep.app. Defaults to 20.
 
+## Configuration
+
+All of the arguments mentioned above can have their defaults changed like:
+
+```lua
+require("telescope").setup({
+extensions = {
+  grep_app = {
+    word = false,
+    regexp = true,
+    max_results = 50,
+  }
+},
+})
+require('telescope').load_extension('grep_app')
+```
 
 ## TODO
 
 - [ ] live grep.app prompt updating in real time. `grep_app live`
 - [ ] Auto completion for args/subcommands
+- [ ] Clone result repo

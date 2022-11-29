@@ -1,9 +1,9 @@
+local grepapp = require("grep_app.init")
+
 return require("telescope").register_extension {
-  setup = function(ext_config, config)
-    -- access extension config and user config
-  end,
+  setup = grepapp.setup,
   exports = {
-    grep_app = require("grep_app").picker,
-    live = require("grep_app").live_picker,
+    grep_app = grepapp.picker,
+    live = grepapp.live_picker,
   },
 }
