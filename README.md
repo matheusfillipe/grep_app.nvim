@@ -26,7 +26,21 @@ lua << EOF
   require('telescope').load_extension('grep_app')
 EOF
 nnoremap <space>ga <cmd>Telescope grep_app<cr>
-vnoremap <space>ga <cmd>Telescope grep_app<cr>
+vnoremap <space>ga "zy:Telescope grep_app search=<C-r>z<cr>
 ```
 
 Then `<space>ga` will search for your current line in grep.app
+
+## Usage
+
+Currently the `grep_app` command supports the following parameters:
+
+* `search=[text]` Search query. Defaults to current line.
+
+* `lang=[text]` override language in github format. Example: `lang=Python`. Defaults to the current buffer's language. check out `lua/grep_app/language_map.lua`
+
+* `word=[bool]` Either true or false, defaults to true for matching entire words.
+
+* `case=[bool]` If true case will be considered. Defaults to false.
+
+* `regexp=[bool]` If true search query will be validated as regex. Defaults to false.
