@@ -28,7 +28,7 @@ local function api_request(query, params)
   end
 
   -- encode query
-  local res = curl.request({method = "get", url = API, query = params})
+  local res = curl.request({method = "get", url = API, query = params, compressed = false})
   if res.status == 200 then
     return json.decode(res.body)
   else
@@ -112,7 +112,7 @@ function Grep(search_query, params, max_results)
 end
 
 function Code_from_url(url)
-  local res = curl.get(url)
+  local res = curl.request({method = "get", url = url, compressed = false})
   if res.status == 200 then
     return res.body
   else
