@@ -33,6 +33,7 @@ local function api_request(query, params)
     return json.decode(res.body)
   else
       print('Error: '..res.status)
+      print(res.body)
   end
 end
 
@@ -40,6 +41,9 @@ local function get_results_and_langs(search_query, params, page)
   local results = {}
   params.page = page
   local api_response = api_request(search_query, params)
+  if not api_response then
+    return results, {}
+  end
   local hits = api_response['hits']['hits']
 
   if hits then

@@ -2,6 +2,7 @@ local actions = require "telescope.actions"
 local action_state = require "telescope.actions.state"
 local pickers = require "telescope.pickers"
 local finders = require "telescope.finders"
+local sorters = require "telescope.sorters"
 local conf = require("telescope.config").values
 local previewers = require "telescope.previewers"
 
@@ -10,6 +11,31 @@ local utils = require("grep_app.utils")
 local language_map = require("grep_app.language_map")
 
 local grepapp = {}
+
+local make_previewer = function(opts)
+  return previewers.new_buffer_previewer {
+      dyn_title = function(_, entry)
+        return entry.value.raw_url
+      end,
+      define_preview = function (self, entry, status)
+        local preview = {}
+        for _,line in pairs(entry.value.lines) do
+          table.insert(preview, line.code)
+        end
+        vim.api.nvim_buf_set_option(self.state.bufnr, "filetype", opts.ftype)
+        vim.api.nvim_buf_set_lines(self.state.bufnr, 0, -1, false, preview)
+      end,
+    }
+end
+
+
+local result_entry_maker = function(result)
+  return {
+    value = result,
+    display = result.repo..": "..result.main_line.code,
+    ordinal = result.main_line.code,
+  }
+end
 
 local function create_raw_buffer(opts, result)
   local raw_url = result.raw_url
@@ -105,14 +131,14 @@ local lang_repeat_picker = function(opts, languages)
   }):find()
 end
 
-grepapp.picker = function(opts)
+local parse_opts = function(opts)
   local ftype = opts.ftype or vim.bo.filetype
   opts.ftype = ftype
   local max_results = opts.max_results or 20
   opts.max_results = max_results
   local lang = opts.lang or language_map[ftype]
   local api_params = {
-    words = opts.words or true,
+    words = opts.words or false,
     case = opts.case or false,
     regexp = opts.regex or false,
     lang = lang
@@ -133,7 +159,14 @@ grepapp.picker = function(opts)
   else
     query = utils.get_current_line()
   end
-  local results, lang_suggestions = grepclient.Grep(query, api_params, max_results)
+
+  return opts, api_params, query
+end
+
+grepapp.picker = function(opts)
+  local _opts, api_params, query = parse_opts(opts)
+  opts = _opts
+  local results, lang_suggestions = grepclient.Grep(query, api_params, opts.max_results)
 
   if #results == 0 then
     if #lang_suggestions > 0 then
@@ -147,28 +180,10 @@ grepapp.picker = function(opts)
   opts = opts or {}
   pickers.new(opts, {
     prompt_title = "grep.app",
-    previewer = previewers.new_buffer_previewer {
-      dyn_title = function(_, entry)
-        return entry.value.raw_url
-      end,
-      define_preview = function (self, entry, status)
-        local preview = {}
-        for _,line in pairs(entry.value.lines) do
-          table.insert(preview, line.code)
-        end
-        vim.api.nvim_buf_set_option(self.state.bufnr, "filetype", ftype)
-        vim.api.nvim_buf_set_lines(self.state.bufnr, 0, -1, false, preview)
-      end,
-    },
+    previewer = make_previewer(opts),
     finder = finders.new_table {
       results = results,
-      entry_maker = function(result)
-        return {
-          value = result,
-          display = result.repo..": "..result.main_line.code,
-          ordinal = result.main_line.code,
-        }
-      end
+      entry_maker = result_entry_maker
     },
     sorter = conf.generic_sorter(opts),
     attach_mappings = function(prompt_bufnr)
@@ -182,7 +197,38 @@ grepapp.picker = function(opts)
 end
 
 grepapp.live_picker = function(opts)
-  print("Live grep is not supported yet")
+  local _opts, api_params, query = parse_opts(opts)
+  opts = _opts
+
+  local dyn_finder = function(prompt)
+      if not prompt or prompt == "" then
+        return nil
+      end
+
+      query = prompt or query
+      local results, lang_suggestions = grepclient.Grep(query, api_params, opts.max_results)
+      return results
+    end
+
+  opts.entry_maker = result_entry_maker
+  opts.fn = dyn_finder
+
+  local live_grepper = finders.new_dynamic(opts)
+
+  pickers.new(opts, {
+    title = "Live grep.app",
+    prompt_title = "Search",
+    finder = live_grepper,
+    previewer = make_previewer(opts),
+    sorter = sorters.highlighter_only(opts),
+    attach_mappings = function(prompt_bufnr)
+      actions.select_default:replace(function()
+        actions.close(prompt_bufnr)
+        action_picker(opts, action_state.get_selected_entry())
+    end)
+    return true
+  end
+  }):find()
 end
 
 -- to execute the function
