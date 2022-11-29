@@ -108,8 +108,10 @@ end
 grepapp.picker = function(opts)
   local ftype = opts.ftype or vim.bo.filetype
   opts.ftype = ftype
+  local max_results = opts.max_results or 20
+  opts.max_results = max_results
   local lang = opts.lang or language_map[ftype]
-  local params = {
+  local api_params = {
     words = opts.words or true,
     case = opts.case or false,
     regexp = opts.regex or false,
@@ -117,6 +119,9 @@ grepapp.picker = function(opts)
   }
 
   for k, v in pairs(opts) do
+    opts[k] = v
+  end
+  for k, v in pairs(api_params) do
     opts[k] = v
   end
 
@@ -128,7 +133,7 @@ grepapp.picker = function(opts)
   else
     query = utils.get_current_line()
   end
-  local results, lang_suggestions = grepclient.Grep(query, params)
+  local results, lang_suggestions = grepclient.Grep(query, api_params, max_results)
 
   if #results == 0 then
     if #lang_suggestions > 0 then

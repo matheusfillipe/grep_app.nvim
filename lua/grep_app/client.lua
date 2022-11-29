@@ -36,9 +36,9 @@ local function api_request(query, params)
   end
 end
 
-
-function Grep(search_query, params)
+local function get_results_and_langs(search_query, params, page)
   local results = {}
+  params.page = page
   local api_response = api_request(search_query, params)
   local hits = api_response['hits']['hits']
 
@@ -82,7 +82,28 @@ function Grep(search_query, params)
   for _, match in ipairs(api_response.facets.lang.buckets) do
     table.insert(languages, match.val)
   end
+  return results, languages
+end
 
+
+function Grep(search_query, params, max_results)
+  local results = {}
+  local languages = {}
+
+  local page = 1
+  while #results < max_results do
+    local res, langs = get_results_and_langs(search_query, params, page)
+    if #res == 0 then
+      break
+    end
+    for _, r in ipairs(res) do
+      table.insert(results, r)
+    end
+    for _, l in ipairs(langs) do
+      table.insert(languages, l)
+    end
+    page = page + 1
+  end
   return results, languages
 end
 
