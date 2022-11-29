@@ -54,4 +54,4 @@ Currently the commands supports the following parameters:
 ## TODO
 
 - [ ] live grep.app prompt updating in real time. `grep_app live`
-- [ ] Paginate over more than 9 results and add a `max_results` parameter
+- [ ] Auto completion for args/subcommands
