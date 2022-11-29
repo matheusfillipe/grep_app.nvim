@@ -4,5 +4,6 @@ return require("telescope").register_extension {
   end,
   exports = {
     grep_app = require("grep_app").picker,
+    live = require("grep_app").live_picker,
   },
 }

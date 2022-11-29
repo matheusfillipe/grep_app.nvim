@@ -27,15 +27,22 @@ lua << EOF
 EOF
 nnoremap <space>ga <cmd>Telescope grep_app<cr>
 vnoremap <space>ga "zy:Telescope grep_app search=<C-r>z<cr>
+nnoremap <space>gz <cmd>Telescope grep_app_live<cr>
 ```
 
 Then `<space>ga` will search for your current line in grep.app
 
 ## Usage
 
-Currently the `grep_app` command supports the following parameters:
+There are two commands: `grep_app` and `grep_app live`. You invoke them as:
+```vim
+:Telescope grep_app [arg=value...]
+:Telescope grep_app live [arg=value...]
+```
 
-* `search=[text]` Search query. Defaults to current line.
+Currently the commands supports the following parameters:
+
+* `search=[text]` Search query. Defaults to current line. In grep live it becomes the default prompt.
 
 * `lang=[text]` override language in github format. Example: `lang=Python`. Defaults to the current buffer's language. check out `lua/grep_app/language_map.lua`
 
@@ -48,4 +55,4 @@ Currently the `grep_app` command supports the following parameters:
 
 ## TODO
 
-- [ ] live grep.app prompt updating in real time.
+- [ ] live grep.app prompt updating in real time. `grep_app live`

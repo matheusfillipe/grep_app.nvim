@@ -176,5 +176,9 @@ grepapp.picker = function(opts)
   }):find()
 end
 
+grepapp.live_picker = function(opts)
+  print("Live grep is not supported yet")
+end
+
 -- to execute the function
 return grepapp
