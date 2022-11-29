@@ -5,10 +5,6 @@
 This is a telescope extension for grabing code from https://grep.app directly from neovim. You can then view it in a temporary buffer.
 
 
-## Dependencies
-
-[plenary](https://github.com/nvim-lua/plenary.nvim)
-
 ## Install
 
 ```vim
@@ -27,7 +23,7 @@ lua << EOF
 EOF
 nnoremap <space>ga <cmd>Telescope grep_app<cr>
 vnoremap <space>ga "zy:Telescope grep_app search=<C-r>z<cr>
-nnoremap <space>gz <cmd>Telescope grep_app_live<cr>
+nnoremap <space>gz <cmd>Telescope grep_app live<cr>
 ```
 
 Then `<space>ga` will search for your current line in grep.app
