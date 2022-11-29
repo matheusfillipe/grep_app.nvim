@@ -44,3 +44,8 @@ Currently the `grep_app` command supports the following parameters:
 * `case=[bool]` If true case will be considered. Defaults to false.
 
 * `regexp=[bool]` If true search query will be validated as regex. Defaults to false.
+
+
+## TODO
+
+- [ ] live grep.app prompt updating in real time.

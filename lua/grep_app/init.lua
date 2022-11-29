@@ -13,7 +13,6 @@ local grepapp = {}
 
 local function create_raw_buffer(opts, result)
   local raw_url = result.raw_url
-  local json = require("grep_app.lib.json_lua.json")
   local code = grepclient.Code_from_url(raw_url)
   -- Create a new buffer with that code
   local bufnr = vim.api.nvim_create_buf(true, true)
@@ -27,18 +26,18 @@ local function create_raw_buffer(opts, result)
   vim.api.nvim_buf_set_option(bufnr, "filetype", opts.ftype)
   vim.api.nvim_buf_set_option(bufnr, "buftype", "nofile")
 
-  local lnum = result.lines[1].lnum
+  local lnum = result.main_line.lnum
   vim.api.nvim_win_set_cursor(0, {lnum, 0})
 end
 
 local paste = function(opts, result)
-  -- Paste result.lines[1].code into current buffer
-  local code = result.lines[1].code
+  -- Paste result.main_line.code into current buffer
+  local code = result.main_line.code
   vim.api.nvim_put({code}, "l", true, true)
 end
 
 local open_browser = function(opts, result)
-  local url = result.lines[1].url
+  local url = result.main_line.url
   -- open using xdg-open if on linux and open if on mac and start if on windows
   if vim.fn.has("mac") == 1 then
     vim.fn.system("open " .. url)
@@ -161,8 +160,8 @@ grepapp.picker = function(opts)
       entry_maker = function(result)
         return {
           value = result,
-          display = result.repo..": "..result.lines[1].code,
-          ordinal = result.lines[1].code,
+          display = result.repo..": "..result.main_line.code,
+          ordinal = result.main_line.code,
         }
       end
     },

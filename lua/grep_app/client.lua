@@ -50,6 +50,7 @@ function Grep(search_query, params)
       local root = htmlparser.parse(snippet)
       local lineno = root('tr')
       local lines = {}
+      local main_line
       for _, e in ipairs(lineno) do
         local lnum = tonumber(e.attributes["data-line"])
         local line = utils.unescape_html(e('pre')[1]:textonly())
@@ -57,11 +58,23 @@ function Grep(search_query, params)
             match.repo.raw.."/blob/" ..
             ((match.branch or {}).raw or 'master').."/"..match.path.raw ..
             "#L"..lnum
-        table.insert(lines, {lnum = lnum, url = url, code = line})
+
+        line = {lnum = lnum, url = url, code = line}
+        table.insert(lines, line)
+
+        if main_line == nil or e('mark') then
+          main_line = line
+        end
       end
       local raw_url = "https://raw.githubusercontent.com/" ..
       match.repo.raw.."/"..((match.branch or {}).raw or 'master').."/"..match.path.raw
-      table.insert(results, {lines = lines, raw_url = raw_url, repo = match.repo.raw, path = match.path.raw})
+      table.insert(results, {
+        lines = lines,
+        raw_url = raw_url,
+        repo = match.repo.raw,
+        path = match.path.raw,
+        main_line = main_line
+      })
     end
   end
 
