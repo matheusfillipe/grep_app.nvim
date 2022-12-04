@@ -2,11 +2,8 @@ local actions = require "telescope.actions"
 local action_state = require "telescope.actions.state"
 local pickers = require "telescope.pickers"
 local finders = require "telescope.finders"
-local sorters = require "telescope.sorters"
 local conf = require("telescope.config").values
-local previewers = require "telescope.previewers"
 
-local grepclient = require("grep_app.client")
 local utils = require("grep_app.utils")
 local language_map = require("grep_app.language_map")
 
@@ -23,6 +20,7 @@ grepapp.setup = function(ext_config, _)
 end
 
 local make_previewer = function(opts)
+  local previewers = require "telescope.previewers"
   return previewers.new_buffer_previewer {
       dyn_title = function(_, entry)
         return entry.value.raw_url
@@ -48,6 +46,7 @@ local result_entry_maker = function(result)
 end
 
 local function create_raw_buffer(opts, result)
+  local grepclient = require("grep_app.client")
   local raw_url = result.raw_url
   local code = grepclient.Code_from_url(raw_url)
   -- Create a new buffer with that code
@@ -223,6 +222,7 @@ local parse_opts = function(opts)
 end
 
 grepapp.picker = function(opts)
+  local grepclient = require("grep_app.client")
   local _opts, api_params, query = parse_opts(opts)
   opts = _opts
   local results, lang_suggestions = grepclient.Grep(query, api_params, opts.max_results)
@@ -256,6 +256,7 @@ grepapp.picker = function(opts)
 end
 
 grepapp.live_picker = function(opts)
+  local grepclient = require("grep_app.client")
   local _opts, api_params, query = parse_opts(opts)
   opts = _opts
 
@@ -276,6 +277,7 @@ grepapp.live_picker = function(opts)
 
   opts.sorting_strategy = "ascending"
 
+  local sorters = require "telescope.sorters"
   pickers.new(opts, {
     title = "Live grep.app",
     prompt_title = "Search",

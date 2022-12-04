@@ -38,17 +38,17 @@ There are two commands: `grep_app` and `grep_app live`. You invoke them as:
 
 Currently the commands supports the following parameters:
 
-* `search=[text]` Search query. Defaults to current line. In grep live it becomes the default prompt.
+* `search=<text>` Search query. Defaults to current line. In grep live it becomes the default prompt.
 
-* `lang=[text]` override language in github format. Example: `lang=Python`. Defaults to the current buffer's language. check out `lua/grep_app/language_map.lua`
+* `lang=<text>` override language in github format. Example: `lang=Python`. Defaults to the current buffer's language. check out `lua/grep_app/language_map.lua`
 
-* `word=[bool]` Either true or false, defaults to true for matching entire words.
+* `word=<bool>` Either true or false, defaults to true for matching entire words.
 
-* `case=[bool]` If true case will be considered. Defaults to false.
+* `case=<bool>` If true case will be considered. Defaults to false.
 
-* `regexp=[bool]` If true search query will be validated as regex. Defaults to false.
+* `regexp=<bool>` If true search query will be validated as regex. Defaults to false.
 
-* `max_results=[int]` Max number of results to get from grep.app. Defaults to 20.
+* `max_results=<int>` Max number of results to get from grep.app. Defaults to 20.
 
 ## Configuration
 
