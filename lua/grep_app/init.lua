@@ -72,6 +72,47 @@ local paste = function(opts, result)
   vim.api.nvim_put({code}, "l", true, true)
 end
 
+local clone = function(opts, result)
+  --- Clone the repo and open the file
+  local repo = result.repo
+  -- prompt for directory
+  local dir = vim.fn.input("Clone to: ", vim.fn.getcwd().."/"..result.repo, "dir")
+  -- clone repo
+  local clone_cmd = "git clone "..result.clone_url.." "..dir
+  local checkout_cmd = "git checkout "..result.branch
+  local on_stderr = function(_, data, _)
+    for _, line in pairs(data) do
+      print(line)
+    end
+  end
+  vim.fn.jobstart(clone_cmd, {
+    on_stderr = on_stderr,
+    on_exit = function(_, code)
+      if code == 0 then
+        -- Start job for checkign out branch
+        vim.fn.jobstart(checkout_cmd, {
+          on_stderr = on_stderr,
+          on_exit = function(_, ccode)
+            if ccode ~= 0 then
+              print("Failed to checkout branch! Trying to open anyway.")
+            end
+              -- open file
+              local file = result.main_line.path
+              local path = dir.."/"..file
+              vim.cmd("edit "..path)
+              -- jump to line
+              local lnum = result.main_line.lnum
+              vim.api.nvim_win_set_cursor(0, {lnum, 0})
+            end,
+          cwd = dir
+        })
+      else
+        print("Error cloning repo: "..result.clone_url.."  to "..dir)
+      end
+    end
+  })
+end
+
 local open_browser = function(opts, result)
   local url = result.main_line.url
   -- open using xdg-open if on linux and open if on mac and start if on windows
@@ -93,8 +134,9 @@ local action_picker = function(opts, result)
     prompt_title = "What to do?",
     finder = finders.new_table {
       results = {
-        {value = "Open raw buffer", action = create_raw_buffer},
-        {value = "Paste line", action = paste},
+        {value = "Open raw in scratch buffer", action = create_raw_buffer},
+        {value = "Paste line in current buffer", action = paste},
+        {value = "Clone repo and open file", action = clone},
         {value = "Open repo in browser", action = open_browser}
       },
       entry_maker = function(this_result)

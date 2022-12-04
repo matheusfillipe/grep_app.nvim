@@ -55,15 +55,16 @@ local function get_results_and_langs(search_query, params, page)
       local lineno = root('tr')
       local lines = {}
       local main_line
+      local branch = ((match.branch or {}).raw or 'main')
       for _, e in ipairs(lineno) do
         local lnum = tonumber(e.attributes["data-line"])
         local line = utils.unescape_html(e('pre')[1]:textonly())
         local url = "https://github.com/" ..
             match.repo.raw.."/blob/" ..
-            ((match.branch or {}).raw or 'master').."/"..match.path.raw ..
+            branch.."/"..match.path.raw ..
             "#L"..lnum
 
-        line = {lnum = lnum, url = url, code = line}
+        line = {lnum = lnum, url = url, code = line, path = match.path.raw}
         table.insert(lines, line)
 
         if main_line == nil or e('mark') then
@@ -71,13 +72,15 @@ local function get_results_and_langs(search_query, params, page)
         end
       end
       local raw_url = "https://raw.githubusercontent.com/" ..
-      match.repo.raw.."/"..((match.branch or {}).raw or 'master').."/"..match.path.raw
+      match.repo.raw.."/"..branch.."/"..match.path.raw
       table.insert(results, {
         lines = lines,
         raw_url = raw_url,
         repo = match.repo.raw,
         path = match.path.raw,
-        main_line = main_line
+        branch = branch,
+        main_line = main_line,
+        clone_url = "https://github.com/"..match.repo.raw..".git",
       })
     end
   end
