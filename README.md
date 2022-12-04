@@ -69,6 +69,7 @@ require('telescope').load_extension('grep_app')
 
 ## TODO
 
-- [ ] live grep.app prompt updating in real time. `grep_app live`
+- [ ] live grep.app prompt updating in real time. `grep_app live` 
+   - Fix laggyness (monothread)
 - [ ] Auto completion for args/subcommands
-- [ ] Clone result repo
+- [x] Clone result repo
