@@ -113,7 +113,16 @@ local clone = function(opts, result)
 end
 
 local open_browser = function(opts, result)
-  local url = result.main_line.url
+  local url
+  if type(result) == "string" then
+    url = result
+  else
+    url = result.main_line.url
+  end
+  if opts.open_browser_cmd then
+    vim.fn.system(opts.open_browser_cmd.." "..url)
+    return
+  end
   -- open using xdg-open if on linux and open if on mac and start if on windows
   if vim.fn.has("mac") == 1 then
     vim.fn.system("open " .. url)
@@ -122,7 +131,7 @@ local open_browser = function(opts, result)
   elseif vim.fn.has("win32") == 1 then
     vim.fn.system("start " .. url)
   else
-    print("Unsupported OS")
+    print("Unsupported OS. Set 'open_browser_cmd' in your opts.")
     print(url)
   end
 end
@@ -292,6 +301,61 @@ grepapp.live_picker = function(opts)
     return true
   end
   }):find()
+end
+
+local get_repo_url = function()
+  return utils.system("git remote get-url origin")
+end
+
+
+local get_line_url = function(opts)
+  local branch = opts.branch
+  if not branch then
+    local current_branch = utils.system("git branch --show-current")
+    local branch_cmd = string.format("git rev-parse --abbrev-ref --symbolic-full-name %s@{upstream}", current_branch)
+    branch = utils.system(branch_cmd)
+    branch = branch:match("[^/]/(.+)")
+    if not branch then
+      branch = utils.system("git -P branch --remotes --list '*/HEAD'")
+      branch = branch:match(".+-> [^/]+/(.+)")
+    end
+  end
+  local url = utils.system("git remote get-url origin")
+  url = url:match("(.+).git")
+  url = url .. "/blob/" .. branch .. "/%s#L%s"
+  local filename = vim.fn.expand("%:p")
+  local filepath = utils.system(string.format("git ls-files --full-name %s", filename))
+  if opts.visual then
+    -- Back to visual mode
+    vim.cmd("normal! gv")
+    local start_line = vim.api.nvim_buf_get_mark(0, '<')[1]
+    local end_line = vim.api.nvim_buf_get_mark(0, '>')[1]
+    local line_range = string.format("%s-L%s", start_line, end_line)
+    url = string.format(url, filepath, line_range)
+  else
+    url = string.format(url, filepath, vim.fn.line("."))
+  end
+  return url
+end
+
+grepapp.copy_repo_url = function(opts)
+  opts, _, _ = parse_opts(opts)
+  vim.fn.setreg("+", get_repo_url())
+end
+
+grepapp.open_repo = function(opts)
+  opts, _, _ = parse_opts(opts)
+  open_browser(opts, get_repo_url())
+end
+
+grepapp.copy_line_url = function(opts)
+  opts, _, _ = parse_opts(opts)
+  vim.fn.setreg("+", get_line_url(opts))
+end
+
+grepapp.open_line = function(opts)
+  opts, _, _ = parse_opts(opts)
+  open_browser(opts, get_line_url(opts))
 end
 
 -- to execute the function

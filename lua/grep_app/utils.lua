@@ -174,4 +174,14 @@ Utils.unescape_html = function(str)
     return str
 end
 
+
+Utils.strip = function(str)
+  return str:gsub("^%s*(.-)%s*$", "%1")
+end
+
+Utils.system = function(cmd)
+  return Utils.strip(vim.fn.system(cmd))
+end
+
+
 return Utils
