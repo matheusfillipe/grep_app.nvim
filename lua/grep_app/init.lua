@@ -131,7 +131,7 @@ local open_browser = function(opts, result)
   elseif vim.fn.has("win32") == 1 then
     vim.fn.system("start " .. url)
   else
-    print("Unsupported OS. Set 'open_browser_cmd' in your opts.")
+    print("Unsupported OS. Set 'open_browser_cmd' in your config.")
     print(url)
   end
 end
@@ -281,12 +281,10 @@ grepapp.live_picker = function(opts)
 
   opts.entry_maker = result_entry_maker
   opts.fn = dyn_finder
-
-  local live_grepper = finders.new_dynamic(opts)
-
   opts.sorting_strategy = "ascending"
 
   local sorters = require "telescope.sorters"
+  local live_grepper = finders.new_dynamic(opts)
   pickers.new(opts, {
     title = "Live grep.app",
     prompt_title = "Search",

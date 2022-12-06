@@ -24,8 +24,8 @@ EOF
 
 # Recommended keymaps
 nnoremap <space>ga <cmd>Telescope grep_app<cr>
-nnoremap <space>gz <cmd>Telescope grep_app live<cr>
 vnoremap <space>ga "zy:Telescope grep_app search_query=<C-r>z<cr>
+nnoremap <space>gz <cmd>Telescope grep_app live<cr>
 nnoremap <space>gol <cmd>Telescope grep_app open_line<cr>
 vnoremap <space>gol <esc><cmd>Telescope grep_app open_line<cr>
 nnoremap <space>gor <cmd>Telescope grep_app open_repo<cr>
@@ -46,7 +46,7 @@ There are two main commands: `grep_app` and `grep_app live`. You invoke them as:
 :Telescope grep_app live [arg=value...]
 ```
 
-Currently the commands supports the following parameters:
+Currently both of the commands supports the following parameters:
 
 * `search=<text>` Search query. Defaults to current line. In grep live it becomes the default prompt.
 
@@ -60,28 +60,14 @@ Currently the commands supports the following parameters:
 
 * `max_results=<int>` Max number of results to get from grep.app. Defaults to 20.
 
-Notice that all those arguments can be either invoked in the command or passed as configuration. For example:
-
-```lua
-  require("telescope").setup({
-    extensions = {
-      grep_app = {
-        --- Your options
-        open_browser_cmd = "chrome"
-        max_results = 5
-      }
-    },
-  })
-```
-
 ## Extras
-These were only tested for github.
+These were only tested for github. They are meant to be used when you clone a repo with the plugin but they will also work for any other git repo.
 
 ### Browser commands
 These subcommands will open in the default browser.
 
 * `open_repo`: Opens current repository in browser.
-* `open_line`: Open current file/branch/line in broweser. You can set `branch=` into the command to set a default branch name.
+* `open_line`: Open current file/branch/line in broweser. You can set `branch=<name>` into the command to set a default branch name.
 
 Example: `:Telescope grep_app open_line`
 
@@ -96,12 +82,13 @@ These commands will copy to the `+` register.
 
 ## Configuration
 
-All of the arguments mentioned above can have their defaults changed like:
+Many of the arguments mentioned above can have their defaults changed like:
 
 ```lua
 require("telescope").setup({
 extensions = {
   grep_app = {
+    open_browser_cmd = "chrome"
     word = false,
     regexp = true,
     max_results = 50,
@@ -113,7 +100,6 @@ require('telescope').load_extension('grep_app')
 
 ## TODO
 
-- [ ] live grep.app prompt updating in real time. `grep_app live` 
-   - Fix laggyness (monothread)
-- [ ] Auto completion for args/subcommands
+- [ ] live grep.app prompt updating in real time. `grep_app live` [here](https://github.com/matheusfillipe/grep_app.nvim/blob/master/lua/grep_app/init.lua#L272)
+   - [ ] Fix laggyness (monothread)
 - [x] Clone result repo
