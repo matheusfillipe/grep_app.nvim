@@ -302,7 +302,8 @@ grepapp.live_picker = function(opts)
 end
 
 local get_repo_url = function()
-  return utils.system("git remote get-url origin")
+  local remote_name = utils.system("git remote")
+  return utils.system("git remote get-url "..remote_name)
 end
 
 
@@ -318,8 +319,8 @@ local get_line_url = function(opts)
       branch = branch:match(".+-> [^/]+/(.+)")
     end
   end
-  local url = utils.system("git remote get-url origin")
-  url = url:match("(.+).git")
+  local url = get_repo_url()
+  url = url:match("(.+)\\.git") or url
   url = url .. "/blob/" .. branch .. "/%s#L%s"
   local filename = vim.fn.expand("%:p")
   local filepath = utils.system(string.format("git ls-files --full-name %s", filename))
