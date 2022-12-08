@@ -320,7 +320,7 @@ local get_line_url = function(opts)
     end
   end
   local url = get_repo_url()
-  url = url:match("(.+)\\.git") or url
+  url = string.gsub(url, ".git$", "")
   url = url .. "/blob/" .. branch .. "/%s#L%s"
   local filename = vim.fn.expand("%:p")
   local filepath = utils.system(string.format("git ls-files --full-name %s", filename))
