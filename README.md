@@ -28,8 +28,10 @@ vnoremap <space>ga "zy:Telescope grep_app search_query=<C-r>z<cr>
 nnoremap <space>gz <cmd>Telescope grep_app live<cr>
 nnoremap <space>gol <cmd>Telescope grep_app open_line<cr>
 vnoremap <space>gol <esc><cmd>Telescope grep_app open_line<cr>
+vnoremap <space>gol <esc><cmd>Telescope grep_app open_file<cr>
 nnoremap <space>gor <cmd>Telescope grep_app open_repo<cr>
 nnoremap <space>gcl <cmd>Telescope grep_app copy_line_url<cr>
+nnoremap <space>gcl <cmd>Telescope grep_app copy_file_url<cr>
 nnoremap <space>gcr <cmd>Telescope grep_app copy_repo_url<cr>
 vnoremap <space>gcl <esc><cmd>Telescope grep_app copy_line_url visual=true<cr>
 ```

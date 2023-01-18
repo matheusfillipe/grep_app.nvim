@@ -302,7 +302,8 @@ grepapp.live_picker = function(opts)
 end
 
 local get_repo_url = function()
-  local remote_name = utils.system("git remote"):match("(.*)\n")
+  local remote_name = utils.system("git remote")
+  remote_name = remote_name:match("(.*)\n") or remote_name
   return utils.system("git remote get-url "..remote_name)
 end
 
@@ -355,6 +356,18 @@ end
 grepapp.open_line = function(opts)
   opts, _, _ = parse_opts(opts)
   open_browser(opts, get_line_url(opts))
+end
+
+grepapp.copy_file_url = function(opts)
+  opts, _, _ = parse_opts(opts)
+  local url = get_line_url(opts)
+  vim.fn.setreg("+", url:gsub("#L.+$", ""))
+end
+
+grepapp.open_file = function(opts)
+  opts, _, _ = parse_opts(opts)
+  local url = get_line_url(opts)
+  open_browser(opts, url:gsub("#L.+$", ""))
 end
 
 -- to execute the function
