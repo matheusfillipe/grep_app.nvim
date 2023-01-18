@@ -69,6 +69,7 @@ These were only tested for github. They are meant to be used when you clone a re
 These subcommands will open in the default browser.
 
 * `open_repo`: Opens current repository in browser.
+* `open_file`: Open current file/branch broweser. You can set `branch=<name>` into the command to set a default branch name.
 * `open_line`: Open current file/branch/line in broweser. You can set `branch=<name>` into the command to set a default branch name.
 
 Example: `:Telescope grep_app open_line`
@@ -79,7 +80,8 @@ Example: `:Telescope grep_app open_line`
 These commands will copy to the `+` register.
 
 * `copy_repo_url`: Simply copies this repo's url
-* `copy_line_url`: Copies the web url for the current line or range if `visual=true`. You can also set `branch=<name>` to set a default branch.
+* `copy_file_url`: Copies the web url for the current file. You can also set `branch=<name>` to set a default branch.
+* `copy_line_url`: Copies the web url for the current file+line or range if `visual=true`. You can also set `branch=<name>` to set a default branch.
 
 
 ## Configuration
