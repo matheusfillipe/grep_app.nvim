@@ -15,7 +15,7 @@ local function get_htmlparser()
 end
 
 
-local function api_request(query, params, dry_run)
+local function api_request(query, params, dry_run, custom_curl_cmd)
   params.q = query
   if params then
     for k, v in pairs(params) do
@@ -30,7 +30,7 @@ local function api_request(query, params, dry_run)
   -- encode query
   local res = curl.request({method = "get", url = API, query = params, compressed = false, dry_run = dry_run})
   if dry_run then
-    table.insert(res, 1, 'curl')
+    table.insert(res, 1, custom_curl_cmd or 'curl')
     return res
   end
   if res.status == 200 then

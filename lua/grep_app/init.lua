@@ -302,7 +302,7 @@ grepapp.live_picker = function(opts)
 end
 
 local get_repo_url = function()
-  local remote_name = utils.system("git remote")
+  local remote_name = utils.system("git remote"):match("(.*)\n")
   return utils.system("git remote get-url "..remote_name)
 end
 

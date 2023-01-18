@@ -86,14 +86,14 @@ Many of the arguments mentioned above can have their defaults changed like:
 
 ```lua
 require("telescope").setup({
-extensions = {
-  grep_app = {
-    open_browser_cmd = "chrome"
-    word = false,
-    regexp = true,
-    max_results = 50,
-  }
-},
+    extensions = {
+      grep_app = {
+        open_browser_cmd = "chrome"
+        word = false,
+        regexp = true,
+        max_results = 50,
+      }
+    },
 })
 require('telescope').load_extension('grep_app')
 ```
