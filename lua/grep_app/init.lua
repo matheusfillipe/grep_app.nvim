@@ -307,10 +307,9 @@ local get_repo_url = function()
   return utils.system("git remote get-url "..remote_name)
 end
 
-
-local get_line_url = function(opts)
+local get_branch = function(opts)
   local branch = opts.branch
-  if not branch then
+  if not branch or branch == "" then
     local current_branch = utils.system("git branch --show-current")
     local branch_cmd = string.format("git rev-parse --abbrev-ref --symbolic-full-name %s@{upstream}", current_branch)
     branch = utils.system(branch_cmd)
@@ -320,6 +319,14 @@ local get_line_url = function(opts)
       branch = branch:match(".+-> [^/]+/(.+)")
     end
   end
+  return branch
+end
+
+local get_commit_hash = function()
+  return utils.system("git rev-parse HEAD")
+end
+
+local generate_github_url = function(opts, branch)
   local url = get_repo_url()
   url = string.gsub(url, ".git$", "")
   url = url .. "/blob/" .. branch .. "/%s#L%s"
@@ -336,6 +343,14 @@ local get_line_url = function(opts)
     url = string.format(url, filepath, vim.fn.line("."))
   end
   return url
+end
+
+
+local get_line_url = function(opts)
+  if opts.branch then
+    return generate_github_url(opts, get_branch(opts))
+  end
+  return generate_github_url(opts, get_commit_hash())
 end
 
 grepapp.copy_repo_url = function(opts)

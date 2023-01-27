@@ -69,8 +69,8 @@ These were only tested for github. They are meant to be used when you clone a re
 These subcommands will open in the default browser.
 
 * `open_repo`: Opens current repository in browser.
-* `open_file`: Open current file/branch broweser. You can set `branch=<name>` into the command to set a default branch name.
-* `open_line`: Open current file/branch/line in broweser. You can set `branch=<name>` into the command to set a default branch name.
+* `open_file`: Open current commit/file on the browser. You can set `branch=<name>` into the command to set a branch name instead of a commit. Leave <name> empty to pick the current branch.
+* `open_line`: Open current commit/file#line on the browser. You can set `branch=<name>` into the command to set a branch name instead of a commit. Leave <name> empty to pick the current branch.
 
 Example: `:Telescope grep_app open_line`
 
