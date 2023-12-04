@@ -11,5 +11,6 @@ return require("telescope").register_extension {
     copy_repo_url = grepapp.copy_repo_url,
     copy_line_url = grepapp.copy_line_url,
     copy_file_url = grepapp.copy_file_url,
+    copy_file_git_path = grepapp.copy_file_git_path,
   },
 }

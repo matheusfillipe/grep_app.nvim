@@ -34,6 +34,7 @@ nnoremap <space>gcl <cmd>Telescope grep_app copy_line_url<cr>
 nnoremap <space>gcl <cmd>Telescope grep_app copy_file_url<cr>
 nnoremap <space>gcr <cmd>Telescope grep_app copy_repo_url<cr>
 vnoremap <space>gcl <esc><cmd>Telescope grep_app copy_line_url visual=true<cr>
+nnoremap <space>gy <cmd>Telescope grep_app copy_file_git_path<cr>
 ```
 
 Then `<space>ga` will search for your current line in grep.app
@@ -82,6 +83,7 @@ These commands will copy to the `+` register.
 * `copy_repo_url`: Simply copies this repo's url
 * `copy_file_url`: Copies the web url for the current file. You can also set `branch=<name>` to set a default branch.
 * `copy_line_url`: Copies the web url for the current file+line or range if `visual=true`. You can also set `branch=<name>` to set a default branch.
+* `copy_file_git_path`: Copies the git project relative path for the current file.
 
 
 ## Configuration

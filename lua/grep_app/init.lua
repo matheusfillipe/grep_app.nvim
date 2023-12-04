@@ -326,12 +326,16 @@ local get_commit_hash = function()
   return utils.system("git rev-parse HEAD")
 end
 
+local get_git_path = function()
+  local filename = vim.fn.expand("%:p")
+  return utils.system(string.format("git ls-files --full-name %s", filename))
+end
+
 local generate_github_url = function(opts, branch)
   local url = get_repo_url()
   url = string.gsub(url, ".git$", "")
   url = url .. "/blob/" .. branch .. "/%s#L%s"
-  local filename = vim.fn.expand("%:p")
-  local filepath = utils.system(string.format("git ls-files --full-name %s", filename))
+  local filepath = get_git_path()
   if opts.visual then
     -- Back to visual mode
     vim.cmd("normal! gv")
@@ -383,6 +387,11 @@ grepapp.open_file = function(opts)
   opts, _, _ = parse_opts(opts)
   local url = get_line_url(opts)
   open_browser(opts, url:gsub("#L.+$", ""))
+end
+
+grepapp.copy_file_git_path = function(opts)
+  opts, _, _ = parse_opts(opts)
+  vim.fn.setreg("+", get_git_path())
 end
 
 -- to execute the function
